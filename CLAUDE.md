@@ -2,9 +2,9 @@
 
 ## Project Overview
 
-그랑블루 요트 마케팅 자동화 프로젝트 (Node.js)
+그랑블루요트 네이버 파워링크 광고 관리 자동화 (Node.js)
 
-서비스: 요트 투어/관광, 파티/이벤트, 대여/차터
+업종: 요트투어 (제주)
 
 ## Commands
 
@@ -19,10 +19,11 @@
 
 ```
 src/
-  sns/              # SNS 자동 포스팅 (캡션, 해시태그, 주간 일정)
-  reservation/      # 예약/문의 관리 (자동 응답, 예약 확인)
-  brochure/         # 맞춤형 소개서 생성 (한국어/영어)
-  data/             # 서비스 데이터 (요트 투어, 파티, 차터 정보)
+  keyword/          # 키워드/입찰 관리 (등록, 추천, 입찰가 자동 조정)
+  adcopy/           # 광고문 자동 생성 (타이틀/설명문, A/B 테스트, 대량 생성)
+  budget/           # 예산/성과 분석 (일별 분석, 성과 평가, 최적 예산 계산)
+  report/           # 보고서 생성 (일간/주간/월간 성과 보고서)
+  data/             # 설정 데이터 (업체 정보, 광고 설정, 성과 목표)
   __tests__/        # Test files (*.test.js)
 .claude/            # Claude Code configuration
 .claude/hooks/      # Hook scripts (DO NOT modify without permission)

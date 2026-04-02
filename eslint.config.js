@@ -11,6 +11,8 @@ module.exports = [
         __filename: "readonly",
         process: "readonly",
         console: "readonly",
+        URL: "readonly",
+        URLSearchParams: "readonly",
       },
     },
     rules: {

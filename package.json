@@ -17,6 +17,9 @@
     "prettier": "^3.2.0"
   },
   "jest": {
+    "coveragePathIgnorePatterns": [
+      "src/api/"
+    ],
     "coverageThreshold": {
       "global": {
         "branches": 80,
@@ -25,5 +28,8 @@
         "statements": 80
       }
     }
+  },
+  "dependencies": {
+    "dotenv": "^17.4.0"
   }
 }

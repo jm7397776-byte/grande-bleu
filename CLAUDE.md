@@ -24,6 +24,7 @@ src/
   budget/           # 예산/성과 분석 (일별 분석, 성과 평가, 최적 예산 계산)
   report/           # 보고서 생성 (일간/주간/월간 성과 보고서)
   promotion/        # 프로모션 기획 (시즌 감지, 할인율 계산, 이벤트 캘린더, 성과 하락 감지)
+  api/              # 네이버 검색광고 API 연동 (인증, 키워드, 광고, 성과, 자동화 엔진)
   data/             # 설정 데이터 (업체 정보, 광고 설정, 성과 목표)
   __tests__/        # Test files (*.test.js)
 .claude/            # Claude Code configuration

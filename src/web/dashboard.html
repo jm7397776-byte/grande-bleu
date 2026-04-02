@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>그랑블루요트 - 광고 관리 대시보드</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f2f5; color: #333; }
+
+.header {
+  background: linear-gradient(135deg, #1a3a5c, #2c6faa);
+  color: white; padding: 20px 30px;
+  display: flex; justify-content: space-between; align-items: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.header h1 { font-size: 22px; }
+.header .status { font-size: 13px; opacity: 0.8; }
+
+.nav {
+  background: white; padding: 0 20px;
+  display: flex; gap: 0; border-bottom: 2px solid #e0e0e0;
+  overflow-x: auto;
+}
+.nav button {
+  padding: 14px 20px; border: none; background: none;
+  font-size: 14px; cursor: pointer; color: #666;
+  border-bottom: 3px solid transparent; white-space: nowrap;
+  transition: all 0.2s;
+}
+.nav button:hover { color: #2c6faa; }
+.nav button.active { color: #2c6faa; border-bottom-color: #2c6faa; font-weight: 600; }
+
+.container { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
+
+.panel { display: none; }
+.panel.active { display: block; }
+
+.card {
+  background: white; border-radius: 12px; padding: 24px;
+  margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+.card h2 { font-size: 18px; margin-bottom: 16px; color: #1a3a5c; }
+.card h3 { font-size: 15px; margin: 16px 0 10px; color: #444; }
+
+.btn {
+  padding: 10px 20px; border: none; border-radius: 8px;
+  font-size: 14px; cursor: pointer; transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-primary { background: #2c6faa; color: white; }
+.btn-primary:hover { background: #1a5a94; }
+.btn-success { background: #2ecc71; color: white; }
+.btn-success:hover { background: #27ae60; }
+.btn-danger { background: #e74c3c; color: white; }
+.btn-danger:hover { background: #c0392b; }
+.btn-warning { background: #f39c12; color: white; }
+.btn-warning:hover { background: #e67e22; }
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+
+.btn-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+
+input, select {
+  padding: 10px 14px; border: 1px solid #ddd; border-radius: 8px;
+  font-size: 14px; width: 100%;
+  transition: border-color 0.2s;
+}
+input:focus, select:focus { outline: none; border-color: #2c6faa; }
+
+.form-row { display: flex; gap: 12px; margin-bottom: 12px; align-items: end; }
+.form-group { flex: 1; }
+.form-group label { display: block; font-size: 13px; color: #666; margin-bottom: 4px; }
+
+.result-box {
+  background: #f8f9fa; border-radius: 8px; padding: 16px;
+  margin-top: 12px; white-space: pre-wrap; font-size: 13px;
+  line-height: 1.6; max-height: 500px; overflow-y: auto;
+  border: 1px solid #e9ecef;
+}
+
+.tag {
+  display: inline-block; padding: 4px 10px; border-radius: 20px;
+  font-size: 12px; margin: 2px;
+}
+.tag-blue { background: #e3f2fd; color: #1565c0; }
+.tag-green { background: #e8f5e9; color: #2e7d32; }
+.tag-orange { background: #fff3e0; color: #e65100; }
+.tag-red { background: #fbe9e7; color: #c62828; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+
+.stat-card {
+  background: white; border-radius: 12px; padding: 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08); text-align: center;
+}
+.stat-card .value { font-size: 28px; font-weight: 700; color: #1a3a5c; }
+.stat-card .label { font-size: 13px; color: #888; margin-top: 4px; }
+
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { background: #f8f9fa; padding: 10px 12px; text-align: left; font-weight: 600; color: #555; }
+td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; }
+tr:hover { background: #fafbfc; }
+
+.copy-card {
+  border: 1px solid #e0e0e0; border-radius: 10px; padding: 16px;
+  margin-bottom: 12px; background: #fafbfc;
+}
+.copy-card .title { font-weight: 600; font-size: 15px; color: #1a3a5c; margin-bottom: 6px; }
+.copy-card .desc { font-size: 13px; color: #555; margin-bottom: 8px; }
+.copy-card .meta { font-size: 12px; color: #999; }
+
+.loading { text-align: center; padding: 40px; color: #999; }
+
+.upload-zone {
+  border: 2px dashed #ccc; border-radius: 12px; padding: 40px;
+  text-align: center; color: #999; margin: 12px 0;
+  transition: all 0.2s;
+}
+.upload-zone:hover { border-color: #2c6faa; color: #2c6faa; }
+
+.event-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px; border-bottom: 1px solid #f0f0f0;
+}
+.event-item:last-child { border-bottom: none; }
+
+.alert { padding: 12px 16px; border-radius: 8px; margin-bottom: 12px; font-size: 14px; }
+.alert-info { background: #e3f2fd; color: #1565c0; }
+.alert-success { background: #e8f5e9; color: #2e7d32; }
+.alert-warning { background: #fff3e0; color: #e65100; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>그랑블루요트 광고 관리</h1>
+    <div class="status">네이버 파워링크 자동화 대시보드</div>
+  </div>
+  <div style="font-size:13px; text-align:right">
+    <div id="connectionStatus">연결 확인 중...</div>
+  </div>
+</div>
+
+<div class="nav">
+  <button class="active" onclick="showPanel('dashboard')">대시보드</button>
+  <button onclick="showPanel('keywords')">키워드 관리</button>
+  <button onclick="showPanel('adcopy')">광고 카피</button>
+  <button onclick="showPanel('images')">이미지 소재</button>
+  <button onclick="showPanel('promotion')">프로모션</button>
+  <button onclick="showPanel('report')">보고서</button>
+</div>
+
+<div class="container">
+
+  <!-- 대시보드 -->
+  <div id="panel-dashboard" class="panel active">
+    <div class="grid" style="margin-bottom:16px">
+      <div class="stat-card">
+        <div class="value" id="statCampaigns">-</div>
+        <div class="label">캠페인</div>
+      </div>
+      <div class="stat-card">
+        <div class="value" id="statKeywords">-</div>
+        <div class="label">추천 키워드</div>
+      </div>
+      <div class="stat-card">
+        <div class="value" id="statServices">5</div>
+        <div class="label">서비스</div>
+      </div>
+      <div class="stat-card">
+        <div class="value" id="statEvents">-</div>
+        <div class="label">다가오는 이벤트</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>빠른 실행</h2>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="showPanel('report'); loadDailyReport()">일간 보고서 생성</button>
+        <button class="btn btn-success" onclick="showPanel('keywords'); suggestKeywords()">키워드 추천</button>
+        <button class="btn btn-warning" onclick="showPanel('adcopy'); generateBulk()">광고 카피 생성</button>
+        <button class="btn btn-primary" onclick="showPanel('promotion'); loadEvents()">프로모션 기획</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>캠페인 목록</h2>
+      <div id="campaignList" class="loading">로딩 중...</div>
+    </div>
+  </div>
+
+  <!-- 키워드 관리 -->
+  <div id="panel-keywords" class="panel">
+    <div class="card">
+      <h2>키워드 검색량 조회</h2>
+      <div class="form-row">
+        <div class="form-group" style="flex:3">
+          <label>키워드 (쉼표로 구분)</label>
+          <input id="searchKeywords" placeholder="제주 요트투어, 제주 요트 가격, 선셋크루즈">
+        </div>
+        <div class="form-group" style="flex:1">
+          <button class="btn btn-primary" onclick="searchKeywordVolume()" style="width:100%;margin-top:18px">검색량 조회</button>
+        </div>
+      </div>
+      <div id="keywordSearchResult"></div>
+    </div>
+
+    <div class="card">
+      <h2>키워드 추천</h2>
+      <button class="btn btn-success" onclick="suggestKeywords()">자동 추천 받기</button>
+      <div id="keywordSuggestions"></div>
+    </div>
+
+    <div class="card">
+      <h2>키워드 추가</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label>광고그룹 ID</label>
+          <input id="kwAdGroupId" placeholder="광고그룹 ID">
+        </div>
+        <div class="form-group">
+          <label>키워드</label>
+          <input id="kwName" placeholder="제주 요트투어">
+        </div>
+        <div class="form-group">
+          <label>입찰가 (원)</label>
+          <input id="kwBid" type="number" placeholder="500" value="500">
+        </div>
+        <div class="form-group">
+          <label>매치타입</label>
+          <select id="kwMatchType">
+            <option value="exact">정확히 일치</option>
+            <option value="phrase">구문 일치</option>
+            <option value="broad">확장 일치</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="addKeyword()">키워드 추가</button>
+      <div id="addKeywordResult"></div>
+    </div>
+
+    <div class="card">
+      <h2>키워드 입찰가 수정</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label>키워드 ID</label>
+          <input id="kwEditId" placeholder="키워드 ID">
+        </div>
+        <div class="form-group">
+          <label>새 입찰가 (원)</label>
+          <input id="kwNewBid" type="number" placeholder="1000">
+        </div>
+        <div class="form-group" style="flex:0.5">
+          <button class="btn btn-warning" onclick="updateBid()" style="width:100%;margin-top:18px">수정</button>
+        </div>
+      </div>
+      <div id="updateBidResult"></div>
+    </div>
+
+    <div class="card">
+      <h2>키워드 ON/OFF / 삭제</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label>키워드 ID</label>
+          <input id="kwToggleId" placeholder="키워드 ID">
+        </div>
+        <div class="form-group" style="flex:0.3">
+          <button class="btn btn-success btn-sm" onclick="toggleKeyword('ENABLED')" style="width:100%;margin-top:18px">ON</button>
+        </div>
+        <div class="form-group" style="flex:0.3">
+          <button class="btn btn-warning btn-sm" onclick="toggleKeyword('PAUSED')" style="width:100%;margin-top:18px">OFF</button>
+        </div>
+        <div class="form-group" style="flex:0.3">
+          <button class="btn btn-danger btn-sm" onclick="deleteKeyword()" style="width:100%;margin-top:18px">삭제</button>
+        </div>
+      </div>
+      <div id="toggleKeywordResult"></div>
+    </div>
+  </div>
+
+  <!-- 광고 카피 -->
+  <div id="panel-adcopy" class="panel">
+    <div class="card">
+      <h2>광고 카피 생성</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label>서비스</label>
+          <select id="copyService">
+            <option value="요트투어">요트투어</option>
+            <option value="선셋크루즈">선셋크루즈</option>
+            <option value="요트파티">요트파티</option>
+            <option value="요트대여">요트대여</option>
+            <option value="낚시투어">낚시투어</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>변형 수</label>
+          <select id="copyVariants">
+            <option value="3">3개</option>
+            <option value="5">5개</option>
+            <option value="10">10개</option>
+          </select>
+        </div>
+        <div class="form-group" style="flex:0.5">
+          <button class="btn btn-primary" onclick="generateCopy()" style="width:100%;margin-top:18px">생성</button>
+        </div>
+      </div>
+      <div id="copyResult"></div>
+    </div>
+
+    <div class="card">
+      <h2>전체 서비스 대량 생성</h2>
+      <button class="btn btn-success" onclick="generateBulk()">5개 서비스 x 3개 카피 생성</button>
+      <div id="bulkCopyResult"></div>
+    </div>
+
+    <div class="card">
+      <h2>A/B 테스트 생성</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label>서비스</label>
+          <select id="abService">
+            <option value="요트투어">요트투어</option>
+            <option value="선셋크루즈">선셋크루즈</option>
+            <option value="요트파티">요트파티</option>
+            <option value="요트대여">요트대여</option>
+            <option value="낚시투어">낚시투어</option>
+          </select>
+        </div>
+        <div class="form-group" style="flex:0.5">
+          <button class="btn btn-warning" onclick="generateAB()" style="width:100%;margin-top:18px">A/B 생성</button>
+        </div>
+      </div>
+      <div id="abResult"></div>
+    </div>
+  </div>
+
+  <!-- 이미지 소재 -->
+  <div id="panel-images" class="panel">
+    <div class="card">
+      <h2>이미지 소재 관리</h2>
+      <div class="alert alert-info">
+        프로젝트 폴더의 <strong>images/</strong> 폴더에 이미지(JPG, PNG)를 넣으면 자동으로 인식됩니다.
+      </div>
+      <button class="btn btn-primary" onclick="listImages()">이미지 목록 보기</button>
+      <button class="btn btn-success" onclick="uploadImages()">전체 업로드</button>
+      <div id="imageList" style="margin-top:12px"></div>
+    </div>
+
+    <div class="card">
+      <h2>이미지 폴더 만들기</h2>
+      <div class="alert alert-warning">
+        터미널에서 아래 명령어로 이미지 폴더를 만드세요:<br>
+        <code style="background:#f5f5f5;padding:4px 8px;border-radius:4px">mkdir -p images</code><br><br>
+        그 다음 요트 사진 파일을 images 폴더에 넣으세요.
+      </div>
+    </div>
+  </div>
+
+  <!-- 프로모션 -->
+  <div id="panel-promotion" class="panel">
+    <div class="card">
+      <h2>다가오는 이벤트</h2>
+      <button class="btn btn-primary" onclick="loadEvents()">이벤트 확인</button>
+      <div id="eventList" style="margin-top:12px"></div>
+    </div>
+
+    <div class="card">
+      <h2>할인율 계산</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label>매출 (원)</label>
+          <input id="promoRevenue" type="number" placeholder="500000" value="500000">
+        </div>
+        <div class="form-group">
+          <label>비용 (원)</label>
+          <input id="promoCost" type="number" placeholder="100000" value="100000">
+        </div>
+        <div class="form-group">
+          <label>전환수</label>
+          <input id="promoConversions" type="number" placeholder="20" value="20">
+        </div>
+        <div class="form-group" style="flex:0.5">
+          <button class="btn btn-warning" onclick="calcDiscount()" style="width:100%;margin-top:18px">계산</button>
+        </div>
+      </div>
+      <div id="discountResult"></div>
+    </div>
+
+    <div class="card">
+      <h2>프로모션 기획</h2>
+      <div class="alert alert-info">
+        검색량 데이터와 성과 데이터를 기반으로 프로모션을 자동 기획합니다.
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>최근 3개월 검색량 (쉼표 구분)</label>
+          <input id="promoVolumes" placeholder="5000,6500,9000">
+        </div>
+      </div>
+      <button class="btn btn-success" onclick="generatePromotion()">프로모션 기획 실행</button>
+      <div id="promotionResult"></div>
+    </div>
+  </div>
+
+  <!-- 보고서 -->
+  <div id="panel-report" class="panel">
+    <div class="card">
+      <h2>일간 성과 보고서</h2>
+      <button class="btn btn-primary" onclick="loadDailyReport()">어제 보고서 생성</button>
+      <div id="reportResult"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showPanel(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  document.querySelectorAll('.nav button').forEach(b => {
+    if (b.textContent.includes(
+      name === 'dashboard' ? '대시보드' :
+      name === 'keywords' ? '키워드' :
+      name === 'adcopy' ? '카피' :
+      name === 'images' ? '이미지' :
+      name === 'promotion' ? '프로모션' : '보고서'
+    )) b.classList.add('active');
+  });
+}
+
+async function api(path, method = 'GET', body = null) {
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch('/api/' + path, opts);
+  return res.json();
+}
+
+// 대시보드
+async function loadDashboard() {
+  try {
+    const campaigns = await api('campaigns');
+    document.getElementById('statCampaigns').textContent = Array.isArray(campaigns) ? campaigns.length : '?';
+    document.getElementById('connectionStatus').innerHTML = '<span style="color:#2ecc71">● API 연결됨</span>';
+
+    if (Array.isArray(campaigns) && campaigns.length > 0) {
+      let html = '<div class="table-wrap"><table><tr><th>캠페인명</th><th>상태</th><th>일예산</th></tr>';
+      campaigns.forEach(c => {
+        html += '<tr><td>' + (c.name || c.nccCampaignId) + '</td><td>' +
+          (c.status || '-') + '</td><td>' + ((c.dailyBudget || 0).toLocaleString()) + '원</td></tr>';
+      });
+      html += '</table></div>';
+      document.getElementById('campaignList').innerHTML = html;
+    } else {
+      document.getElementById('campaignList').innerHTML = '<div class="alert alert-warning">캠페인이 없거나 데이터: ' + JSON.stringify(campaigns) + '</div>';
+    }
+  } catch (e) {
+    document.getElementById('connectionStatus').innerHTML = '<span style="color:#e74c3c">● 연결 실패</span>';
+    document.getElementById('campaignList').innerHTML = '<div class="alert alert-warning">API 연결을 확인해주세요: ' + e.message + '</div>';
+  }
+
+  const suggestions = await api('keywords/suggest');
+  document.getElementById('statKeywords').textContent = suggestions.total || '-';
+
+  const events = await api('promotion/events');
+  document.getElementById('statEvents').textContent = Array.isArray(events) ? events.length : '-';
+}
+
+// 키워드
+async function searchKeywordVolume() {
+  const input = document.getElementById('searchKeywords').value;
+  if (!input) return;
+  const keywords = input.split(',').map(k => k.trim());
+  document.getElementById('keywordSearchResult').innerHTML = '<div class="loading">조회 중...</div>';
+  try {
+    const data = await api('keywords/search', 'POST', { keywords });
+    if (data && data.keywordList) {
+      let html = '<div class="table-wrap"><table><tr><th>키워드</th><th>PC 검색량</th><th>모바일 검색량</th><th>경쟁 정도</th></tr>';
+      data.keywordList.forEach(k => {
+        html += '<tr><td>' + k.relKeyword + '</td><td>' + (k.monthlyPcQcCnt || '-') +
+          '</td><td>' + (k.monthlyMobileQcCnt || '-') + '</td><td><span class="tag tag-orange">' +
+          (k.compIdx || '-') + '</span></td></tr>';
+      });
+      html += '</table></div>';
+      document.getElementById('keywordSearchResult').innerHTML = html;
+    } else {
+      document.getElementById('keywordSearchResult').innerHTML = '<div class="result-box">' + JSON.stringify(data, null, 2) + '</div>';
+    }
+  } catch (e) {
+    document.getElementById('keywordSearchResult').innerHTML = '<div class="alert alert-warning">' + e.message + '</div>';
+  }
+}
+
+async function suggestKeywords() {
+  const data = await api('keywords/suggest');
+  let html = '<h3>핵심 키워드 (' + data.core.length + '개)</h3><div style="margin:8px 0">';
+  data.core.slice(0, 30).forEach(k => { html += '<span class="tag tag-blue">' + k + '</span> '; });
+  html += '</div><h3>확장 키워드 (' + data.extended.length + '개)</h3><div style="margin:8px 0">';
+  data.extended.slice(0, 30).forEach(k => { html += '<span class="tag tag-green">' + k + '</span> '; });
+  html += '</div><p style="color:#999;font-size:13px;margin-top:8px">총 ' + data.total + '개 키워드</p>';
+  document.getElementById('keywordSuggestions').innerHTML = html;
+}
+
+async function addKeyword() {
+  const data = {
+    adGroupId: document.getElementById('kwAdGroupId').value,
+    keyword: document.getElementById('kwName').value,
+    bid: parseInt(document.getElementById('kwBid').value),
+    matchType: document.getElementById('kwMatchType').value,
+  };
+  try {
+    const result = await api('keywords/add', 'POST', data);
+    document.getElementById('addKeywordResult').innerHTML = '<div class="alert alert-success">키워드 추가 완료!</div>';
+  } catch (e) {
+    document.getElementById('addKeywordResult').innerHTML = '<div class="alert alert-warning">' + e.message + '</div>';
+  }
+}
+
+async function updateBid() {
+  const data = { keywordId: document.getElementById('kwEditId').value, newBid: parseInt(document.getElementById('kwNewBid').value) };
+  try {
+    await api('keywords/update-bid', 'POST', data);
+    document.getElementById('updateBidResult').innerHTML = '<div class="alert alert-success">입찰가 수정 완료!</div>';
+  } catch (e) {
+    document.getElementById('updateBidResult').innerHTML = '<div class="alert alert-warning">' + e.message + '</div>';
+  }
+}
+
+async function toggleKeyword(status) {
+  const id = document.getElementById('kwToggleId').value;
+  try {
+    await api('keywords/toggle', 'POST', { keywordId: id, status });
+    document.getElementById('toggleKeywordResult').innerHTML = '<div class="alert alert-success">상태 변경: ' + status + '</div>';
+  } catch (e) {
+    document.getElementById('toggleKeywordResult').innerHTML = '<div class="alert alert-warning">' + e.message + '</div>';
+  }
+}
+
+async function deleteKeyword() {
+  const id = document.getElementById('kwToggleId').value;
+  if (!confirm('정말 삭제하시겠습니까?')) return;
+  try {
+    await api('keywords/delete', 'POST', { keywordId: id });
+    document.getElementById('toggleKeywordResult').innerHTML = '<div class="alert alert-success">삭제 완료!</div>';
+  } catch (e) {
+    document.getElementById('toggleKeywordResult').innerHTML = '<div class="alert alert-warning">' + e.message + '</div>';
+  }
+}
+
+// 광고 카피
+async function generateCopy() {
+  const service = document.getElementById('copyService').value;
+  const variants = parseInt(document.getElementById('copyVariants').value);
+  const data = await api('adcopy/generate', 'POST', { service, variants });
+  const copies = Array.isArray(data) ? data : [data];
+  let html = '';
+  copies.forEach((c, i) => {
+    html += '<div class="copy-card"><div class="title">' + (i+1) + '. ' + c.title + '</div>' +
+      '<div class="desc">' + c.description + '</div>' +
+      '<div class="meta">서비스: ' + c.service + '</div></div>';
+  });
+  document.getElementById('copyResult').innerHTML = html;
+}
+
+async function generateBulk() {
+  const data = await api('adcopy/bulk');
+  let html = '';
+  for (const [service, copies] of Object.entries(data)) {
+    html += '<h3 style="margin-top:16px">' + service + '</h3>';
+    copies.forEach((c, i) => {
+      html += '<div class="copy-card"><div class="title">' + c.title + '</div>' +
+        '<div class="desc">' + c.description + '</div></div>';
+    });
+  }
+  document.getElementById('bulkCopyResult').innerHTML = html;
+}
+
+async function generateAB() {
+  const service = document.getElementById('abService').value;
+  const data = await api('adcopy/abtest', 'POST', { service });
+  let html = '<div class="grid"><div class="copy-card" style="border-color:#2ecc71">' +
+    '<div class="meta"><span class="tag tag-green">A (대조군)</span></div>' +
+    '<div class="title">' + data.control.title + '</div>' +
+    '<div class="desc">' + data.control.description + '</div></div>' +
+    '<div class="copy-card" style="border-color:#3498db">' +
+    '<div class="meta"><span class="tag tag-blue">B (실험군)</span></div>' +
+    '<div class="title">' + data.test.title + '</div>' +
+    '<div class="desc">' + data.test.description + '</div></div></div>';
+  document.getElementById('abResult').innerHTML = html;
+}
+
+// 이미지
+async function listImages() {
+  const data = await api('images/list');
+  if (Array.isArray(data) && data.length > 0) {
+    let html = '<div class="table-wrap"><table><tr><th>파일명</th><th>크기</th></tr>';
+    data.forEach(img => {
+      html += '<tr><td>' + img.name + '</td><td>' + (img.size / 1024).toFixed(1) + ' KB</td></tr>';
+    });
+    html += '</table></div>';
+    document.getElementById('imageList').innerHTML = html;
+  } else {
+    document.getElementById('imageList').innerHTML = '<div class="alert alert-warning">images/ 폴더에 이미지가 없습니다. 요트 사진을 넣어주세요.</div>';
+  }
+}
+
+async function uploadImages() {
+  document.getElementById('imageList').innerHTML = '<div class="loading">업로드 중...</div>';
+  try {
+    const data = await api('images/upload', 'POST');
+    document.getElementById('imageList').innerHTML = '<div class="alert alert-success">업로드 완료: ' + data.uploaded + '개 성공, ' + (data.failed || 0) + '개 실패</div>';
+  } catch (e) {
+    document.getElementById('imageList').innerHTML = '<div class="alert alert-warning">' + e.message + '</div>';
+  }
+}
+
+// 프로모션
+async function loadEvents() {
+  const data = await api('promotion/events');
+  if (Array.isArray(data) && data.length > 0) {
+    let html = '';
+    data.forEach(e => {
+      const urgency = e.daysUntil <= 7 ? 'tag-red' : e.daysUntil <= 14 ? 'tag-orange' : 'tag-blue';
+      html += '<div class="event-item"><div><strong>' + e.name + '</strong><br>' +
+        '<span style="font-size:12px;color:#999">' + e.date + ' | ' + e.type + '</span></div>' +
+        '<span class="tag ' + urgency + '">D-' + e.daysUntil + '</span></div>';
+    });
+    document.getElementById('eventList').innerHTML = html;
+  } else {
+    document.getElementById('eventList').innerHTML = '<div class="alert alert-info">60일 이내 이벤트가 없습니다.</div>';
+  }
+}
+
+async function calcDiscount() {
+  const data = {
+    revenue: parseInt(document.getElementById('promoRevenue').value),
+    cost: parseInt(document.getElementById('promoCost').value),
+    conversions: parseInt(document.getElementById('promoConversions').value),
+  };
+  const result = await api('promotion/discount', 'POST', data);
+  let html = '<div style="margin-top:12px">';
+  html += '<div class="grid"><div class="stat-card"><div class="value">' + result.currentRoas + '%</div><div class="label">현재 ROAS</div></div>';
+  html += '<div class="stat-card"><div class="value">' + result.maxDiscountRate + '%</div><div class="label">최대 할인 가능</div></div>';
+  html += '<div class="stat-card"><div class="value">' + result.recommendedDiscount + '%</div><div class="label">권장 할인율</div></div></div>';
+  if (result.discountOptions && result.discountOptions.length > 0) {
+    html += '<div class="table-wrap" style="margin-top:12px"><table><tr><th>할인율</th><th>예상 ROAS</th><th>적정 여부</th></tr>';
+    result.discountOptions.forEach(o => {
+      html += '<tr><td>' + o.discountRate + '%</td><td>' + o.projectedRoas + '%</td><td>' +
+        (o.viable ? '<span class="tag tag-green">적정</span>' : '<span class="tag tag-red">위험</span>') + '</td></tr>';
+    });
+    html += '</table></div>';
+  }
+  html += '</div>';
+  document.getElementById('discountResult').innerHTML = html;
+}
+
+async function generatePromotion() {
+  const volumeStr = document.getElementById('promoVolumes').value;
+  if (!volumeStr) return;
+  const volumes = volumeStr.split(',').map((v, i) => ({ month: (i + 1) + '월', volume: parseInt(v.trim()) }));
+  const perf = {
+    revenue: parseInt(document.getElementById('promoRevenue').value) || 500000,
+    cost: parseInt(document.getElementById('promoCost').value) || 100000,
+    conversions: parseInt(document.getElementById('promoConversions').value) || 20,
+  };
+  try {
+    const data = await api('promotion/plan', 'POST', { searchVolumes: volumes, performanceData: perf });
+    let html = '<div class="result-box">' + (data.summary || JSON.stringify(data, null, 2)) + '</div>';
+    document.getElementById('promotionResult').innerHTML = html;
+  } catch (e) {
+    document.getElementById('promotionResult').innerHTML = '<div class="alert alert-warning">' + e.message + '</div>';
+  }
+}
+
+// 보고서
+async function loadDailyReport() {
+  document.getElementById('reportResult').innerHTML = '<div class="loading">보고서 생성 중...</div>';
+  try {
+    const data = await api('report/daily');
+    document.getElementById('reportResult').innerHTML = '<div class="result-box">' + (data.summary || JSON.stringify(data, null, 2)) + '</div>';
+  } catch (e) {
+    document.getElementById('reportResult').innerHTML = '<div class="alert alert-warning">' + e.message + '</div>';
+  }
+}
+
+// 초기 로드
+loadDashboard();
+</script>
+</body>
+</html>

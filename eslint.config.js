@@ -13,6 +13,7 @@ module.exports = [
         console: "readonly",
         URL: "readonly",
         URLSearchParams: "readonly",
+        Buffer: "readonly",
       },
     },
     rules: {

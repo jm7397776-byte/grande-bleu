@@ -2,7 +2,9 @@
 
 ## Project Overview
 
-Node.js project.
+그랑블루 요트 마케팅 자동화 프로젝트 (Node.js)
+
+서비스: 요트 투어/관광, 파티/이벤트, 대여/차터
 
 ## Commands
 
@@ -16,10 +18,14 @@ Node.js project.
 ## Directory Structure
 
 ```
-src/              # Source code
-src/__tests__/    # Test files (*.test.js)
-.claude/          # Claude Code configuration
-.claude/hooks/    # Hook scripts (DO NOT modify without permission)
+src/
+  sns/              # SNS 자동 포스팅 (캡션, 해시태그, 주간 일정)
+  reservation/      # 예약/문의 관리 (자동 응답, 예약 확인)
+  brochure/         # 맞춤형 소개서 생성 (한국어/영어)
+  data/             # 서비스 데이터 (요트 투어, 파티, 차터 정보)
+  __tests__/        # Test files (*.test.js)
+.claude/            # Claude Code configuration
+.claude/hooks/      # Hook scripts (DO NOT modify without permission)
 ```
 
 ## Code Style

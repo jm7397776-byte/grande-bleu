@@ -1,3 +1,5 @@
+const jestPlugin = require("eslint-plugin-jest");
+
 module.exports = [
   {
     languageOptions: {
@@ -9,18 +11,34 @@ module.exports = [
         __filename: "readonly",
         process: "readonly",
         console: "readonly",
-        describe: "readonly",
-        it: "readonly",
-        expect: "readonly",
-        beforeEach: "readonly",
-        afterEach: "readonly",
       },
     },
     rules: {
       "no-unused-vars": "warn",
       "no-undef": "error",
+      "no-var": "error",
+      "prefer-const": "warn",
       eqeqeq: "error",
       "no-console": "warn",
+    },
+  },
+  {
+    files: ["src/__tests__/**/*.js"],
+    plugins: { jest: jestPlugin },
+    languageOptions: {
+      globals: {
+        describe: "readonly",
+        it: "readonly",
+        expect: "readonly",
+        beforeEach: "readonly",
+        afterEach: "readonly",
+        beforeAll: "readonly",
+        afterAll: "readonly",
+        jest: "readonly",
+      },
+    },
+    rules: {
+      ...jestPlugin.configs.recommended.rules,
     },
   },
 ];

@@ -1,0 +1,14 @@
+{
+  "name": "grande-bleu",
+  "version": "1.0.0",
+  "description": "Grande Bleu project",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint src/"
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0",
+    "jest": "^29.7.0"
+  }
+}
